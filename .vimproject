@@ -1,0 +1,22 @@
+
+xmipp-www=/$PWD filter="*.rb *.rake *.txt *.rdoc *.haml *.js *.html *.css Rakefile *.rake" {
+ README.rdoc
+ Rakefile
+ lib=lib {
+  xmipp.rb
+ }
+ test=test {
+  helper.rb
+  test_xmipp-www.rb
+ }
+ webservice=webservice {
+  xmippWS.rb
+ }
+ www=www {
+  xmipp_sinatra.rb
+  public=public {
+   results=results {
+   }
+  }
+ }
+}
