@@ -24,7 +24,7 @@ end
 
 post '/' do
 
-  name  = params[:name] || ''
+  name  = params[:name]
 
   unless params[:file] &&
     (tmpfile = params[:file][:tempfile]) &&
@@ -33,6 +33,10 @@ post '/' do
     @error = "No file selected"
     @title = "XMIPP [Error]"
     return haml(:error)
+  end
+
+  if name.nil? || name.empty?
+    name = File.basename(filename).sub(/\.[^\.]*$/,'')
   end
 
   # Change this information to match you actual web serice
@@ -77,12 +81,23 @@ get '/:job' do
 
 end
 
+get '/Jmol/:file' do
+  file   = params[:file]
+  @title = "Jmol: #{ file }"
+
+  @file  = File.join('..', 'results', file)
+  haml :Jmol
+end
+
 __END__
 
 @@ layout
+!!!
 %html
   %head
     %title== XMMIP: #{@title}
+    %script{:src => '/Jmol/Jmol.js', :type => 'text/javascript'}
+
   %body
     = yield
 
@@ -115,4 +130,17 @@ __END__
     - file   = p[0]
     - result = p[1]
     %li
-      %a{:href => "#{File.join('results',file)}"}= file
+      %a{:href => File.join('results',file)}= file
+      - if file =~ /.pdb$/
+        %a{:href => File.join('Jmol',file)} (view in Jmol)
+
+
+@@ Jmol
+%h1== Jmol: #{@file}
+:javascript
+  jmolInitialize("/Jmol");
+  jmolApplet(400, 'load #{@file}');
+   
+    
+    
+
