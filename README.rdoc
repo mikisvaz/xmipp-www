@@ -11,6 +11,8 @@ Description goes here.
     ./scons.configure && ./scons.compile
 2. Update the file lib/xmipp.rb to change the BIN_DIR to point to the xmipp bin/ directory
 
+3. Install Jmol applet. Just copy the .js and the applet .jar in <xmipp-www dir>/www/public/Jmol directory. Follow the instructions "here":http://wiki.jmol.org/index.php/Jmol_Applet#Installing_Jmol_Applet
+
 == Running
 1. Install simplews and rbbt
 2. Start web service:
