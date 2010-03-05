@@ -2,6 +2,22 @@
 
 Description goes here.
 
+== Instalation
+1. Install xmipp: This is a suggested way, installing it locally for a user
+    mkdir -p $HOME/software/opt
+    cd $HOME/software/opt
+    svn co http://newxmipp.svn.sourceforge.net/svnroot/newxmipp/trunk/xmipp
+    cd xmipp
+    ./scons.configure && ./scons.compile
+2. Update the file lib/xmipp.rb to change the BIN_DIR to point to the xmipp bin/ directory
+
+== Running
+1. Install simplews and rbbt
+2. Start web service:
+    start_jobs_ws <xmipp-www dir>/webservice/xmippWS.rb  --name XMIPPWS
+3. Start sinatra web server:
+    ruby <xmipp-www dir>/www/xmipp_sinatra.rb
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
