@@ -13,6 +13,10 @@ FileUtils.mkdir_p RESULTS_DIR unless File.exists? RESULTS_DIR
 
 $driver = SimpleWS.get_driver(WS_url, WS_name)
 
+get '/favicon.ico' do
+  ""
+end
+
 get '/' do
   @title ="Home"
   haml :index
@@ -77,10 +81,10 @@ __END__
 
 @@ layout
 %html
-%head
-%title== XMMIP: #{@title}
-%body
-  = yield
+  %head
+    %title== XMMIP: #{@title}
+  %body
+    = yield
 
 @@ index
 %form(action='/'  method='post' enctype='multipart/form-data')
@@ -104,9 +108,6 @@ __END__
     %li= msg
 
 @@ results
-%head
-  %title= @job
-
 %h1== Results for #{@job}
 
 %ul
