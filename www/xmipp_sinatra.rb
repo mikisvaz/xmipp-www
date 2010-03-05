@@ -3,6 +3,7 @@ require 'sinatra'
 require 'haml'
 require 'simplews'
 require 'base64'
+require 'yaml'
 
 WS_url  = "http://localhost:1984" # Change
 WS_name = "XMIPPWS"                # Change
@@ -12,6 +13,8 @@ RESULTS_DIR = File.join(File.dirname(File.expand_path(__FILE__)), 'public', 'res
 FileUtils.mkdir_p RESULTS_DIR unless File.exists? RESULTS_DIR
 
 $driver = SimpleWS.get_driver(WS_url, WS_name)
+
+OPTIONS = YAML.load($driver.vol2pseudo_params)
 
 get '/favicon.ico' do
   ""
@@ -23,8 +26,8 @@ get '/' do
 end
 
 post '/' do
-
   name  = params[:name]
+  options = Hash[*params.select{|key, value| OPTIONS.keys.include? key}.flatten]
 
   unless params[:file] &&
     (tmpfile = params[:file][:tempfile]) &&
@@ -40,7 +43,7 @@ post '/' do
   end
 
   # Change this information to match you actual web serice
-  job = $driver.vol2pseudo(Base64.encode64(tmpfile.read), name)
+  job = $driver.vol2pseudo(Base64.encode64(tmpfile.read), options.to_yaml, name)
 
   redirect "/" + job
 end
@@ -105,9 +108,21 @@ __END__
 %form(action='/'  method='post' enctype='multipart/form-data')
   %h3 Volume file
   %input{:type=>"file",:name=>"file"}
+  %h3 Expert parameters
+  - OPTIONS.sort_by{|p| p.first}.collect do |p|
+    - name, value = p
+    %h4= name
+    - case
+      - when Fixnum === value || Float === value || String === value
+        %input{:name => name, :value => value}
+      - when FalseClass === value || TrueClass === value
+        %input{:name => name, :value => value ? 1 : 0}
+      - else
+
   %h3 Name your job (optional)
   %input(name='name')
-  %input(type='submit')
+  %p
+    %input(type='submit')
 
 @@ error
 %h1
