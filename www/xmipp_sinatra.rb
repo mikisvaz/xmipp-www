@@ -13,6 +13,7 @@ RESULTS_DIR = File.join(File.dirname(File.expand_path(__FILE__)), 'public', 'res
 FileUtils.mkdir_p RESULTS_DIR unless File.exists? RESULTS_DIR
 
 WSDL_FILE = File.join(File.dirname(File.dirname(File.expand_path(__FILE__))), 'webservice', 'wsdl', 'xmippWS.wsdl')
+EXAMPLE_FILE = File.join(File.dirname(File.dirname(File.expand_path(__FILE__))), 'test', 'data', 'PolAB_msk4.spi')
 $driver = SOAP::WSDLDriverFactory.new(WSDL_FILE).create_rpc_driver
 
 OPTIONS = YAML.load($driver.vol2pseudo_params)
@@ -24,6 +25,11 @@ end
 get '/wsdl' do
   send_file(WSDL_FILE, :filename => 'xmippWS.wsdl')
 end
+
+get '/example' do
+  send_file(EXAMPLE_FILE, :filename => 'PolAB_msk4.spi', :type => 'application/xmipp')
+end
+
 
 get '/documentation' do
   haml :documentation
@@ -137,7 +143,9 @@ __END__
 
 @@ index
 %form(action='/'  method='post' enctype='multipart/form-data')
-  %h3 Volume file
+  %h3 
+    Volume file
+    %a(href='/example') (example)
   %input{:type=>"file",:name=>"file"}
   %h3 Expert parameters
   - OPTIONS.sort_by{|p| p.first}.collect do |p|
