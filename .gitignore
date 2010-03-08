@@ -21,3 +21,4 @@ pkg
 ## PROJECT::SPECIFIC
 www/public/
 tmp/
+webservice/wsdl/

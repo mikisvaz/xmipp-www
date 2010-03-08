@@ -4,20 +4,29 @@ require 'haml'
 require 'simplews'
 require 'base64'
 require 'yaml'
+require 'soap/wsdlDriver'
 
-WS_url  = "http://localhost:1984" # Change
-WS_name = "XMIPPWS"                # Change
+ 
 
 RESULTS_DIR = File.join(File.dirname(File.expand_path(__FILE__)), 'public', 'results')
 
 FileUtils.mkdir_p RESULTS_DIR unless File.exists? RESULTS_DIR
 
-$driver = SimpleWS.get_driver(WS_url, WS_name)
+WSDL_FILE = File.join(File.dirname(File.dirname(File.expand_path(__FILE__))), 'webservice', 'wsdl', 'xmippWS.wsdl')
+$driver = SOAP::WSDLDriverFactory.new(WSDL_FILE).create_rpc_driver
 
 OPTIONS = YAML.load($driver.vol2pseudo_params)
 
 get '/favicon.ico' do
   ""
+end
+
+get '/wsdl' do
+  send_file(WSDL_FILE, :filename => 'xmippWS.wsdl')
+end
+
+get '/documentation' do
+  haml :documentation
 end
 
 get '/' do
@@ -102,7 +111,29 @@ __END__
     %script{:src => '/Jmol/Jmol.js', :type => 'text/javascript'}
 
   %body
-    = yield
+    %style
+      :sass
+        header ul
+          :list-style none
+    %header
+      %ul
+        %li
+          %a(href='/') [Main]
+          %a(href='/documentation') [Web Service Documentation]
+    %content
+      = yield
+
+@@documentation
+%style
+  :sass
+    table
+      th, td
+        :border 1px solid
+      tr#WS_method_vol2pseudo td.WS_operation, tr#WS_method_vol2pseudo_params td.WS_operation 
+        :font-weight bold
+
+%a{ :href =>'/wsdl'} WSDL file
+= $driver.documentation
 
 @@ index
 %form(action='/'  method='post' enctype='multipart/form-data')
