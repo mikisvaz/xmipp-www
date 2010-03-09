@@ -9,12 +9,18 @@ Description goes here.
     svn co http://newxmipp.svn.sourceforge.net/svnroot/newxmipp/trunk/xmipp
     cd xmipp
     ./scons.configure && ./scons.compile
+    # LD_LIBRARY_PATH needs to be set up for the webservice to work
+    export LD_LIBRARY_PATH=$HOME/software/opt/xmipp/lib:$LD_LIBRARY_PATH
+
 2. Update the file lib/xmipp.rb to change the BIN_DIR to point to the xmipp bin/ directory
 
 3. Install Jmol applet. Just copy the .js and the applet .jar in <xmipp-www dir>/www/public/Jmol directory. Follow the instructions "here":http://wiki.jmol.org/index.php/Jmol_Applet#Installing_Jmol_Applet
 
 == Running
 1. Install simplews and rbbt. You may need to run rbbt_config, just accept the default values
+    mkdir -p $HOME/git/
+    cd $HOME/git
+    git clone git://github.com/mikisvaz/xmipp-www.git
 2. Start web service:
     start_jobs_ws <xmipp-www dir>/webservice/xmippWS.rb  --name XMIPPWS --host <hostname> --wsdl <xmipp-www dir>/webservice/wsdl/xmippWS.wsdl
 3. Start sinatra web server:
