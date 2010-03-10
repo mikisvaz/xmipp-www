@@ -1,10 +1,12 @@
 require 'rubygems'
 require 'sinatra'
 require 'haml'
+require 'sass'
 require 'simplews'
 require 'base64'
 require 'yaml'
 require 'soap/wsdlDriver'
+require 'uri'
 
  
 
@@ -22,6 +24,11 @@ get '/favicon.ico' do
   ""
 end
 
+get '/aplication.css' do
+  headers 'Content-Type' => 'text/css'
+  sass :styles
+end
+
 get '/wsdl' do
   send_file(WSDL_FILE, :filename => 'xmippWS.wsdl')
 end
@@ -37,12 +44,15 @@ end
 
 get '/' do
   @title ="Home"
+  @options1 = OPTIONS.keys[0..(OPTIONS.length/2)-1]
+  @options2 = OPTIONS.keys[(OPTIONS.length/2)..OPTIONS.length]
   haml :index
 end
 
 post '/' do
   name  = params[:name]
   options = Hash[*params.select{|key, value| OPTIONS.keys.include? key}.flatten]
+  options[:name] = options[:name].gsub(/\s+/,"_") unless options[:name].nil?
 
   unless params[:file] &&
     (tmpfile = params[:file][:tempfile]) &&
@@ -55,13 +65,22 @@ post '/' do
 
   if name.nil? || name.empty?
     name = File.basename(filename).sub(/\.[^\.]*$/,'')
+  else
+    name = name.gsub(/\s+/,"_")
   end
+
+  puts options.to_yaml
 
   # Change this information to match you actual web serice
   job = $driver.vol2pseudo(Base64.encode64(tmpfile.read), options.to_yaml, name)
 
   redirect "/" + job
 end
+
+get '/help' do
+  haml :help
+end
+
 
 get '/:job' do
   @job   = params[:job]
@@ -107,94 +126,4 @@ get '/Jmol/:file' do
   haml :Jmol
 end
 
-__END__
-
-@@ layout
-!!!
-%html
-  %head
-    %title== XMMIP: #{@title}
-    %script{:src => '/Jmol/Jmol.js', :type => 'text/javascript'}
-
-  %body
-    %style
-      :sass
-        header ul
-          :list-style none
-    %header
-      %ul
-        %li
-          %a(href='/') [Main]
-          %a(href='/documentation') [Web Service Documentation]
-    %content
-      = yield
-
-@@documentation
-%style
-  :sass
-    table
-      th, td
-        :border 1px solid
-      tr#WS_method_vol2pseudo td.WS_operation, tr#WS_method_vol2pseudo_params td.WS_operation 
-        :font-weight bold
-
-%a{ :href =>'/wsdl'} WSDL file
-= $driver.documentation
-
-@@ index
-%form(action='/'  method='post' enctype='multipart/form-data')
-  %h3 
-    Volume file
-    %a(href='/example') (example)
-  %input{:type=>"file",:name=>"file"}
-  %h3 Expert parameters
-  - OPTIONS.sort_by{|p| p.first}.collect do |p|
-    - name, value = p
-    %h4= name
-    - case
-      - when Fixnum === value || Float === value || String === value
-        %input{:name => name, :value => value}
-      - when FalseClass === value || TrueClass === value
-        %input{:name => name, :value => value ? 1 : 0}
-      - else
-
-  %h3 Name your job (optional)
-  %input(name='name')
-  %p
-    %input(type='submit')
-
-@@ error
-%h1
-  == Job #{@job} finished with error status
-%p= @error
-
-@@ wait
-%head
-  %meta{ 'http-equiv' => 'refresh', :content => "5" }
-%h1== Status: #{@status}
-%ul
-  - @messages.each do |msg|
-    %li= msg
-
-@@ results
-%h1== Results for #{@job}
-
-%ul
-  - @files.zip(@results).each do |p|
-    - file   = p[0]
-    - result = p[1]
-    %li
-      %a{:href => File.join('results',file)}= file
-      - if file =~ /.pdb$/
-        %a{:href => File.join('Jmol',file)} (view in Jmol)
-
-
-@@ Jmol
-%h1== Jmol: #{@file}
-:javascript
-  jmolInitialize("/Jmol");
-  jmolApplet(400, 'load #{@file}');
-   
-    
-    
 

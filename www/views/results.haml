@@ -1,0 +1,11 @@
+%h1== Results for #{@job}
+
+%ul
+  - @files.zip(@results).each do |p|
+    - file   = p[0]
+    - result = p[1]
+    %li
+      %a{:href => File.join('results',file)}= file
+      - if file =~ /.pdb$/
+        %a{:href => File.join('Jmol',file)} (view in Jmol)
+

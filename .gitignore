@@ -22,3 +22,4 @@ pkg
 www/public/
 tmp/
 webservice/wsdl/
+www/views/.sass-cache/

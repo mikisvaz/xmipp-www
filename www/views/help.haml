@@ -1,0 +1,21 @@
+%h3 Help
+%style
+  :sass
+    table
+      th, td
+        :border 1px solid
+        :padding 2px 20px 2px 20px
+
+
+%h4 Analysis parameters
+
+%table
+  %th Parameter
+  %th Description
+  - OPTIONS.sort_by{|p| p.first}.collect do |p|
+    %tr
+      %td=p.first
+      %td Description needed
+
+ 
+      

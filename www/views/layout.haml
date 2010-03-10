@@ -1,0 +1,31 @@
+!!!
+%html
+  %head
+    %title== XMMIP: #{@title}
+    %script{:src => '/Jmol/Jmol.js', :type => 'text/javascript'}
+    %script{:src => '/js/jquery.js', :type => 'text/javascript'}
+    %script{:src => '/js/aplication.js', :type => 'text/javascript'}
+    %link{:rel => "stylesheet", :media => "all", :href => "/aplication.css", :type => "text/css"}
+  %body
+    #header
+      #logo
+        %h1 XMIPP-WWW
+        %p CNB - UCM Bioinfo Unit
+      #menu
+        %ul
+          %li
+            %a(href='/') Main
+          %li
+            %a(href='/help') Help
+          %li
+            %a(href='/documentation') Web Service Documentation
+    #page
+      #content
+        .post
+          %header
+          .entry
+            %content
+              = yield
+    #footer
+      %p
+        CNB - UCM Bioinfo Unit 
