@@ -1,4 +1,4 @@
-%h1== Jmol: '#{File.basename @file}'
+%h1== Jmol: '#{@file}'
 :javascript
   jmolInitialize("/Jmol");
-  jmolApplet(400, 'load "#{URI.escape(@file, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))}"');
+  jmolApplet(400, 'load "#{@file_url}"');

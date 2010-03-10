@@ -119,10 +119,10 @@ get '/:job' do
 end
 
 get '/Jmol/:file' do
-  file   = params[:file]
-  @title = "Jmol: #{ file }"
+  @file   = params[:file]
+  @title = "Jmol: #{ @file }"
 
-  @file  = File.join('..', 'results', file)
+  @file_url  = File.join('..', 'results', URI.escape(@file, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]")))
   haml :Jmol
 end
 
