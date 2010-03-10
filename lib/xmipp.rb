@@ -40,8 +40,8 @@ module XMIPP
   def self.volume_to_pseudoatom(infile, outfile, options = {})
     options = process_options(options)
 
-    params  = options.collect {|param, value| "-#{param} #{value}" } * " "
-    cmd = "#{File.join(BIN_DIR, 'xmipp_convert_vol2pseudo')} #{params} -i #{infile} -o #{outfile} -thr 2"
+    params  = options.collect {|param, value| "-#{param} '#{value}'" } * " "
+    cmd = "#{File.join(BIN_DIR, 'xmipp_convert_vol2pseudo')} #{params} -i #{infile} -o '#{outfile}' -thr 2"
     system(cmd)
   end
 end
