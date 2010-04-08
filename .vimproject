@@ -1,4 +1,4 @@
-xmipp-www=/$PWD filter="*.rb *.rake *.txt *.rdoc *.haml *.js *.html *.css Rakefile *.rake" {
+xmipp-www=/$PWD filter="*.rb *.rake *.txt *.rdoc *.haml *.js *.html *.css Rakefile *.rake *.sass" {
  README.rdoc
  Rakefile
  lib=lib {
@@ -13,5 +13,16 @@ xmipp-www=/$PWD filter="*.rb *.rake *.txt *.rdoc *.haml *.js *.html *.css Rakefi
  }
  www=www {
   xmipp_sinatra.rb
+  views=views{
+   Jmol.haml
+   documentation.haml
+   error.haml
+   help.haml
+   index.haml
+   layout.haml
+   results.haml
+   wait.haml
+   styles.sass
+  }
  }
 }
